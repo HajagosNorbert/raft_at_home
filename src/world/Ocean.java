@@ -2,9 +2,9 @@ package world;
 
 import helper.TextColor;
 
-public class Ocean extends Tile {
+public class Ocean implements Tile {
     @Override
-    public String toString() {
+    public String getIllustration() {
         return TextColor.CYAN+"\u2591\u2591"+TextColor.RESET;
     }
 }

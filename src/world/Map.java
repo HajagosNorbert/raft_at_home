@@ -1,46 +1,37 @@
 package world;
 
-import worldObject.Player;
-import worldObject.Shark;
-
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class Map {
 
     private final Tile[][] tiles;
-    public final int y;
-    public final int x;
+    public final int height;
+    public final int width;
 
-    {
-        y = 25;
-        x = 35;
-    }
+    public Map(int width, int height){
+        this.width = width;
+        this.height = height;
 
-
-    public Map(){
-        tiles = new Tile[y][x];
+        tiles = new Tile[height][width];
         for (Tile[] row:tiles) {
             Arrays.fill(row, new Ocean());
         }
 
         //raft in the middle
-        tiles[y/2][x/2] = new Platform();
-        tiles[y/2][x/2 + 1] = new Platform();
-        tiles[y/2 + 1][x/2] = new Platform();
-        tiles[y/2 + 1][x/2 + 1] = new Platform();
+        tiles[height /2][width /2] = new Platform();
+        tiles[height /2][width /2 + 1] = new Platform();
+        tiles[height /2 + 1][width /2] = new Platform();
+        tiles[height /2 + 1][width /2 + 1] = new Platform();
 
-
-        tiles[y/4][x/3] = new Shark();
-        tiles[y-10][x/2] = new Player();
 
     }
 
-    @Override
-    public String toString() {
-        String out = "";
-        for (Tile[] row:tiles) {
-            out += Arrays.stream(row).map(tile -> tile.toString()).collect(Collectors.joining()) + System.lineSeparator();
+    public String[][] getTileIllustrations() {
+        String[][] out = new String[height][width];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                out[y][x] = tiles[y][x].getIllustration();
+            }
         }
         return out;
     }

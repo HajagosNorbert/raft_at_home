@@ -2,9 +2,9 @@ package world;
 
 import helper.TextColor;
 
-public class Platform extends Tile{
+public class Platform implements Tile{
     @Override
-    public String toString() {
+    public String getIllustration() {
         return TextColor.BLACK +"\u2588\u2588" +TextColor.RESET;
     }
 }

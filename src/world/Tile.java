@@ -1,5 +1,5 @@
 package world;
 
-public abstract class Tile {
-    private Object building;
+public interface Tile extends Illustratable {
+
 }
