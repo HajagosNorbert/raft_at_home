@@ -23,7 +23,10 @@ public class Map {
         tiles[height /2 + 1][width /2] = new Platform();
         tiles[height /2 + 1][width /2 + 1] = new Platform();
 
+    }
 
+    public Tile getTile(int x, int y){
+        return tiles[y][x];
     }
 
     public String[][] getTileIllustrations() {

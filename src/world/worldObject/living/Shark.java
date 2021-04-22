@@ -1,5 +1,6 @@
 package world.worldObject.living;
 
+import helper.Illustrations;
 import world.Illustratable;
 
 public class Shark extends Character implements Illustratable {
@@ -9,7 +10,6 @@ public class Shark extends Character implements Illustratable {
     }
 
     public String getIllustration() {
-        // SHARK 🦈
-        return "\uD83E\uDD88";
+        return Illustrations.getSharkIllustration();
     }
 }

@@ -1,10 +1,10 @@
 package world;
 
-import helper.TextColor;
+import helper.Illustrations;
 
 public class Platform implements Tile{
     @Override
     public String getIllustration() {
-        return TextColor.BLACK +"\u2588\u2588" +TextColor.RESET;
+        return Illustrations.getPlatformIllustration();
     }
 }

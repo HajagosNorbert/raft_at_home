@@ -1,0 +1,24 @@
+Commands available:
+'[direction-number]': move to a direction. Also denoted on the number pad:
+   '1': down-left
+   '2': down
+   '3': down-right
+   '4': left
+   '5': current tile. (drink/eat/fish) if you are on a (purifier/fireplace/ocean) tile
+   '6': right
+   '7': up-left
+   '8': up
+   '9': up-right
+
+'g [direction-number]': gather resource from the tile specified by the direction-number
+
+'b [what] [direction-number]': builds the specified building on the tile specified by the direction-number.
+[what] can be the following
+   'spear' (arbitrary direction number)
+   'fireplace'
+   'purifier'
+   'net'
+   'platform'
+
+And of course 'h' for help :)
+Press [Enter] to continue.
