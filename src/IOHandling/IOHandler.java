@@ -2,11 +2,9 @@ package IOHandling;
 
 import game.Game;
 import helper.Direction;
-import helper.ImpossibleActionException;
 import helper.UserInputException;
 import world.Ocean;
 import world.worldObject.living.Action;
-import world.worldObject.living.MoveAction;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,25 +55,20 @@ public class IOHandler {
         Matcher m = getCommand();
         //number input
         if (m.group(2) != null) {
-            if (m.group(2) == "5") {
+            if (m.group(2).equals("5")) {
                 //fish
                 int x = game.getPlayer().getX();
                 int y = game.getPlayer().getY();
-                if(game.getMap().getTile(x, y) instanceof Ocean){
-                    //do fishing
+                if (game.getMap().getTile(x, y) instanceof Ocean) {
+                    return () -> game.getPlayer().fish();
                 }
-
                 //drink
                 //eat
+            }
 
-            }
             Direction moveDir = Direction.directionCodeToDirection(Integer.parseInt(m.group(2)));
-            try {
-                return new MoveAction(game.getMap(), game.getPlayer(), moveDir);
-            } catch (ImpossibleActionException e) {
-                System.out.println(e.getMessage());
-                return getAction(game);
-            }
+            return () -> game.getPlayer().move(game.getMap(), moveDir);
+
         }
         if (m.group(3) != null) {
             help(game.getGameIllustration());

@@ -3,8 +3,8 @@ package game;
 import IOHandling.GameLoader;
 import IOHandling.IOHandler;
 import helper.Illustrations;
+import helper.ImpossibleActionException;
 import world.Map;
-import world.worldObject.living.Action;
 import world.worldObject.living.Player;
 import world.worldObject.living.Shark;
 
@@ -66,8 +66,12 @@ public class Game {
         IOHandler.displayGameIllustration(getGameIllustration());
         IOHandler.greet();
         while(true){
-            Action action = IOHandler.getAction(this);
-            action.execute();
+            try {
+                IOHandler.getAction(this).execute();
+            }catch (ImpossibleActionException e){
+                System.out.println(e.getMessage());
+                continue;
+            }
             actionHappened();
             IOHandler.displayGameIllustration(getGameIllustration());
             //sharkaction
@@ -101,7 +105,7 @@ public class Game {
 
     public String getGameIllustration(){
         String worldIllustration = getWorldIllustration();
-        String InventoryIllustration = player.inventory.getIllustration()+System.lineSeparator();
+        String InventoryIllustration = player.getInventory().getIllustration()+System.lineSeparator();
         String playerStatusIllustration = player.getStatusIllustration()+System.lineSeparator();
         return worldIllustration+playerStatusIllustration+InventoryIllustration;
     }

@@ -1,5 +1,7 @@
 package world;
 
-public interface Tile extends Illustratable {
+import world.worldObject.Building;
 
+public interface Tile extends Illustratable {
+    public Building getBuilding();
 }
