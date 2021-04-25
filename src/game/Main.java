@@ -6,6 +6,5 @@ public class Main {
         boolean isSimplyIllustrated = args.length > 0 && args[0].toLowerCase().equals("simple");
         Game game = new Game(isSimplyIllustrated);
         game.start();
-
     }
 }

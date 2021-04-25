@@ -13,7 +13,7 @@ public class Illustrations {
 
     private static boolean isSimple;
 
-    {
+    static {
         isSimple = false;
     }
 
@@ -37,38 +37,32 @@ public class Illustrations {
 
     public static final String getPlayerIllustration() {
         // "\uD83D\uDE00" = 😀
-        String playerIllustration = (!isSimple) ? "\uD83D\uDE00" : "Pl";
-        return playerIllustration;
+        return (!isSimple) ? "\uD83D\uDE00" : "Pl";
     }
 
     public static final String getSharkIllustration() {
         // "\uD83E\uDD88" = 🦈
-        String sharkIllustration = (!isSimple) ? "\uD83E\uDD88" : "Sh";
-        return sharkIllustration;
+        return (!isSimple) ? "\uD83E\uDD88" : "Sh";
     }
 
     public static final String getWoodIllustration() {
         // "\uD83E\uDDF1" = 🧱
-        String woodIllustration = (!isSimple) ? "\uD83E\uDDF1" : "Wd";
-        return woodIllustration;
+        return  (!isSimple) ? "\uD83E\uDDF1" : "Wd";
     }
 
     public static final String getLeafIllustration() {
         // "\uD83C\uDF41" = 🍁
-        String leafIllustration = (!isSimple) ? "\uD83C\uDF41" : "Lf";
-        return leafIllustration;
+        return  (!isSimple) ? "\uD83C\uDF41" : "Lf";
     }
 
     public static final String getDebrisIllustration() {
         // "\u2699" = ⚙
-        String debrisIllustration = (!isSimple) ? "\u2699" : "De";
-        return debrisIllustration;
+        return  (!isSimple) ? "\u2699" : "De";
     }
 
     public static final String getPotatoIllustration() {
         //"\uD83E\uDD54" = 🥔
-        String potatoIllustration = (!isSimple) ? "\uD83E\uDD54" : "Po";
-        return potatoIllustration;
+        return  (!isSimple) ? "\uD83E\uDD54" : "Po";
     }
 
     public static final String getFishIllustration() {
@@ -95,4 +89,11 @@ public class Illustrations {
         // "\uD83D\uDD78"  = 🕸️
         return (!isSimple) ? "\uD83D\uDD78" : "Nt";
     }
+
+    public static final String getBarrelIllustration() {
+        // "\uD83D\uDEE2"  = 🛢️
+        return (!isSimple) ? "\uD83D\uDEE2" : "Br";
+    }
+
+
 }

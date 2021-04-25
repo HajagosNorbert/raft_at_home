@@ -65,7 +65,6 @@ public class IOHandler {
                 //drink
                 //eat
             }
-
             Direction moveDir = Direction.directionCodeToDirection(Integer.parseInt(m.group(2)));
             return () -> game.getPlayer().move(game.getMap(), moveDir);
 

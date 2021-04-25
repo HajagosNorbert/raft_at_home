@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 public class Inventory {
     private Map<Resource, Integer> resourceAmounts;
-
     public Inventory() {
         resourceAmounts = Arrays.stream(Resource.values()).collect(Collectors.toMap(resource -> resource, resource -> 0));
     }

@@ -1,23 +1,31 @@
 package world.worldObject.supply;
 
+import helper.Illustrations;
 import world.Illustratable;
 
 import java.util.Map;
 
-public class Supply extends Illustratable {
-    //LEEGYSZERŰSÍTENI A SOK KÜLÖNBÖZ SUPPLY-T
+public enum Supply implements Illustratable {
+    WOOD("wood", Illustrations.getWoodIllustration()),
+    LEAF("leaf", Illustrations.getLeafIllustration()),
+    DEBRIS("debris", Illustrations.getDebrisIllustration()),
+    BARREL("barrel", Illustrations.getBarrelIllustration());
 
-    Map<Resource, Integer> resourceAmounts;
-    static String illustration;
-    public Supply(Map<Resource, Integer> resourceAmounts, String illustration){
-        this.resourceAmounts = resourceAmounts;
-        this.illustration = getIllustration();
+
+
+    private String name;
+    private String illustration;
+
+    Supply(String name, String illustration){
+        this.name = name;
+        this.illustration = illustration;
     }
 
-    public Map<Resource, Integer> getResourceAmounts(){
-
+    public String getName() {
+        return name;
     }
+
     public String getIllustration(){
-        return "a";
+        return illustration;
     }
 }

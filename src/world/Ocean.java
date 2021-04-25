@@ -2,11 +2,18 @@ package world;
 
 import helper.Illustrations;
 import world.worldObject.Building;
+import world.worldObject.supply.Supply;
 
 public class Ocean implements Tile {
+    private Supply supply;
+
+    public void setSupply(Supply supply) {
+        this.supply = supply;
+    }
+
     @Override
     public String getIllustration() {
-        return Illustrations.getOceanIllustration();
+        return (supply != null)? supply.getIllustration(): Illustrations.getOceanIllustration();
     }
 
     @Override

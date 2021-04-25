@@ -5,6 +5,7 @@ import IOHandling.IOHandler;
 import helper.Illustrations;
 import helper.ImpossibleActionException;
 import world.Map;
+import world.Ocean;
 import world.worldObject.living.Player;
 import world.worldObject.living.Shark;
 
@@ -73,6 +74,8 @@ public class Game {
                 continue;
             }
             actionHappened();
+            spawnSupplies();
+
             IOHandler.displayGameIllustration(getGameIllustration());
             //sharkaction
             //supplyFlows
@@ -89,6 +92,10 @@ public class Game {
         if(actionCounter >= maxNumberOfActions && player.isAlive()){
             win();
         }
+    }
+
+    private void spawnSupplies(){
+        getMap().spawnSupplies();
     }
 
     private void lose(){
