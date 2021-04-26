@@ -3,28 +3,21 @@ package world.worldObject.supply;
 import helper.Illustrations;
 
 public enum Resource {
-    WOOD("wood", Illustrations.getWoodIllustration()),
-    LEAF("leaf", Illustrations.getLeafIllustration()),
-    DEBRIS("debris", Illustrations.getDebrisIllustration()),
-    BARREL("barrel", Illustrations.getBarrelIllustration()),
-    POTATO("potato", Illustrations.getPotatoIllustration()),
-    FISH("fish", Illustrations.getFishIllustration());
+    WOOD(Illustrations.getWoodIllustration()),
+    LEAF(Illustrations.getLeafIllustration()),
+    DEBRIS(Illustrations.getDebrisIllustration()),
+    BARREL(Illustrations.getBarrelIllustration()),
+    POTATO(Illustrations.getPotatoIllustration()),
+    FISH(Illustrations.getFishIllustration());
 
-
-    private String name;
     private String illustration;
 
-    Resource(String name, String illustration){
-        this.name = name;
+    Resource(String illustration){
         this.illustration = illustration;
     }
 
     public String getIllustration() {
         return illustration;
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

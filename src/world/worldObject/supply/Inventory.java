@@ -16,11 +16,15 @@ public class Inventory {
         resourceAmounts.put(resource, resourceAmounts.get(resource) + amount);
     }
 
+    public void add(Supply supply, int amount){
+        add( Resource.valueOf(supply.name()), 1);
+    }
+
     public String getIllustration(){
         return resourceAmounts.entrySet().stream().map(this::getResourceAmountIllustration).collect(Collectors.joining(" | "));
     }
 
     private String getResourceAmountIllustration(Map.Entry<Resource, Integer> resourceAmount){
-        return resourceAmount.getKey().getName()+": "+resourceAmount.getValue().toString();
+        return resourceAmount.getKey().name().toLowerCase()+": "+resourceAmount.getValue().toString();
     }
 }

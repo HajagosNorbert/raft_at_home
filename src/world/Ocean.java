@@ -11,6 +11,10 @@ public class Ocean implements Tile {
         this.supply = supply;
     }
 
+    public Supply getSupply() {
+        return supply;
+    }
+
     @Override
     public String getIllustration() {
         return (supply != null)? supply.getIllustration(): Illustrations.getOceanIllustration();

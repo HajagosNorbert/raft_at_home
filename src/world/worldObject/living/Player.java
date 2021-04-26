@@ -5,8 +5,11 @@ import helper.Illustrations;
 import helper.ImpossibleActionException;
 import world.Illustratable;
 import world.Map;
+import world.Ocean;
+import world.Tile;
 import world.worldObject.supply.Inventory;
 import world.worldObject.supply.Resource;
+import world.worldObject.supply.Supply;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -66,18 +69,51 @@ public class Player extends Character implements Illustratable {
         int newX = getX() + direction.x;
         int newY = getY() + direction.y;
 
-        if(newY < 0 || newY >= map.height || newX < 0 || newX >= map.width){
+        if(outOfWorld(newX, newY, map.height, map.width))
             throw new ImpossibleActionException("Out of the world");
-        }
+
         setX(newX);
         setY(newY);
     }
 
-    public boolean fish(){
+    private boolean outOfWorld(int x, int y, int height, int width){
+        return y < 0 || y >= height || x < 0 || x >= width;
+    }
+
+    public void fish(){
         if(Math.random() <= 0.25){
             inventory.add(Resource.FISH, 1);
         }
-        return true;
+    }
+
+    private void throwExceptionIfGatheringImpossible(int supplyPosX, int supplyPosY, Map map) throws ImpossibleActionException{
+
+        if(outOfWorld(supplyPosX, supplyPosY, map.height, map.width))
+            throw new ImpossibleActionException("Out of the world");
+        Tile tile = map.getTile(supplyPosX, supplyPosY);
+        if(!(tile instanceof Ocean))
+            throw new ImpossibleActionException("Only the ocean has supplies flowing");
+
+        Supply supply = ((Ocean) tile).getSupply();
+        if(supply == null)
+            throw new ImpossibleActionException("There is no supply here");
+    }
+
+    public void gatherSupply(Map map, Direction direction) throws ImpossibleActionException{
+        int supplyPosX = getX() + direction.x;
+        int supplyPosY = getY() + direction.y;
+
+        throwExceptionIfGatheringImpossible(supplyPosX, supplyPosY, map);
+
+        Ocean ocean = (Ocean) map.getTile(supplyPosX, supplyPosY);
+        Supply supply = ocean.getSupply();
+
+        if(supply == Supply.BARREL){
+            //oh shit
+        }
+
+        inventory.add( supply, 1);
+        ocean.setSupply(null);
     }
 
     public Inventory getInventory(){

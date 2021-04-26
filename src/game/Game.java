@@ -74,11 +74,11 @@ public class Game {
                 continue;
             }
             actionHappened();
+            flowSupplies();
             spawnSupplies();
 
             IOHandler.displayGameIllustration(getGameIllustration());
             //sharkaction
-            //supplyFlows
         }
     }
 
@@ -96,6 +96,10 @@ public class Game {
 
     private void spawnSupplies(){
         getMap().spawnSupplies();
+    }
+
+    private void flowSupplies(){
+        getMap().flowSupplies();
     }
 
     private void lose(){

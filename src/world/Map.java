@@ -25,12 +25,12 @@ public class Map {
 
         tiles = new Tile[height][width];
         for (Tile[] row : tiles) {
-            for(Tile tile: row){
+            for (Tile tile : row) {
                 tile = new Ocean();
             }
         }
-        for (int y = 0; y<height;y++) {
-            for(int x = 0; x < width; x++){
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 tiles[y][x] = new Ocean();
             }
         }
@@ -72,9 +72,37 @@ public class Map {
         ocean.setSupply(supply);
     }
 
-    public void flowSupplies(){
+    public void flowSupplies() {
+        destroyBottomRowSupplies();
 
+        for (int y = height - 2; y >= 0; y--) {
+            for (int x = 0; x < width; x++) {
+                if (!(getTile(x, y) instanceof Ocean)) continue;
+                if (((Ocean) getTile(x, y)).getSupply() == null) continue;
+                flowSuppyDown(x, y);
+            }
+        }
     }
+    private void destroyBottomRowSupplies(){
+        for (int x = 0; x < width; x++) {
+            try {
+                ((Ocean) getTile(x, height - 1)).setSupply(null);
+            } catch (Exception e) {
+                continue;
+            }
+        }
+    }
+
+    private void flowSuppyDown(int x, int y) {
+        Ocean upstreamOcean = ((Ocean) getTile(x, y));
+        Tile downstreamTile = getTile(x, y+1);
+
+        if(!(downstreamTile instanceof Ocean)) return;
+
+        ((Ocean)downstreamTile).setSupply(upstreamOcean.getSupply());
+        upstreamOcean.setSupply(null);
+    }
+
 
     public String[][] getTileIllustrations() {
         String[][] out = new String[height][width];

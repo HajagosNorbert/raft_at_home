@@ -3,8 +3,10 @@ package IOHandling;
 import game.Game;
 import helper.Direction;
 import helper.UserInputException;
+import world.Map;
 import world.Ocean;
 import world.worldObject.living.Action;
+import world.worldObject.living.Player;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,29 +52,53 @@ public class IOHandler {
         return m;
     }
 
-    public static Action getAction(Game game) {
-        //talán ha átadnék egy currentIllustration String-et.
-        Matcher m = getCommand();
-        //number input
-        if (m.group(2) != null) {
-            if (m.group(2).equals("5")) {
-                //fish
-                int x = game.getPlayer().getX();
-                int y = game.getPlayer().getY();
-                if (game.getMap().getTile(x, y) instanceof Ocean) {
-                    return () -> game.getPlayer().fish();
-                }
-                //drink
-                //eat
-            }
-            Direction moveDir = Direction.directionCodeToDirection(Integer.parseInt(m.group(2)));
-            return () -> game.getPlayer().move(game.getMap(), moveDir);
+    private static Action tryInteractHereAction(Matcher m, Player player, Map map){
+        if(m.group(2) == null || !m.group(2).equals("5")) return null;
+        int x = player.getX();
+        int y = player.getY();
+        if (map.getTile(x, y) instanceof Ocean) {
+            return () -> player.fish();
+        }
+        //drink
+        //eat
+        return null;
+    }
 
-        }
-        if (m.group(3) != null) {
-            help(game.getGameIllustration());
-            return getAction(game);
-        }
+    private static Action tryMoveActionFormat(Matcher m, Player player, Map map){
+        if (m.group(2) == null) return null;
+        Direction moveDir = Direction.directionCodeToDirection(Integer.parseInt(m.group(2)));
+        return () -> player.move(map, moveDir);
+    }
+
+    private static boolean tryHelpFormat(Matcher m, Game game){
+        if (m.group(3) == null) return  false;
+        help(game.getGameIllustration());
+        return true;
+    }
+    private static Action tryGatherAction(Matcher m, Player player, Map map){
+        if (m.group(5) == null) return  null;
+        Direction direction = Direction.directionCodeToDirection(Integer.parseInt(m.group(5).split(" ")[1]));
+        return () -> player.gatherSupply(map, direction);
+    }
+
+    public static Action getAction(Game game) {
+        Action action;
+        Player player = game.getPlayer();
+        Map map = game.getMap();
+        Matcher m = getCommand();
+
+        boolean helped = tryHelpFormat(m, game);
+        if(helped) return getAction(game);
+
+        action = tryInteractHereAction(m, player,map);
+        if(action != null) return action;
+
+        action = tryMoveActionFormat(m, player,map);
+        if(action != null) return action;
+
+        action = tryGatherAction(m, player, map);
+        if(action != null) return action;
+
         return null;
     }
 
