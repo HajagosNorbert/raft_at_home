@@ -109,7 +109,7 @@ public class Player extends Character implements Illustratable {
         Supply supply = ocean.getSupply();
 
         if(supply == Supply.BARREL){
-            //oh shit
+
         }
 
         inventory.add( supply, 1);

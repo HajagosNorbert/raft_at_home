@@ -20,6 +20,11 @@ public class Inventory {
         add( Resource.valueOf(supply.name()), 1);
     }
 
+    public void add(Map<Resource, Integer> amountsToAdd){
+        amountsToAdd.forEach((resource, amount )-> resourceAmounts.merge(resource, amount, Integer::sum));
+    }
+
+
     public String getIllustration(){
         return resourceAmounts.entrySet().stream().map(this::getResourceAmountIllustration).collect(Collectors.joining(" | "));
     }
