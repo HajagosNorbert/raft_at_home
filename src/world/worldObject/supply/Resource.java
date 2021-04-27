@@ -6,7 +6,6 @@ public enum Resource {
     WOOD(Illustrations.getWoodIllustration()),
     LEAF(Illustrations.getLeafIllustration()),
     DEBRIS(Illustrations.getDebrisIllustration()),
-    BARREL(Illustrations.getBarrelIllustration()),
     POTATO(Illustrations.getPotatoIllustration()),
     FISH(Illustrations.getFishIllustration());
 

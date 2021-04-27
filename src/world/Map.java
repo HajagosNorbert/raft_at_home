@@ -83,7 +83,8 @@ public class Map {
             }
         }
     }
-    private void destroyBottomRowSupplies(){
+
+    private void destroyBottomRowSupplies() {
         for (int x = 0; x < width; x++) {
             try {
                 ((Ocean) getTile(x, height - 1)).setSupply(null);
@@ -95,11 +96,11 @@ public class Map {
 
     private void flowSuppyDown(int x, int y) {
         Ocean upstreamOcean = ((Ocean) getTile(x, y));
-        Tile downstreamTile = getTile(x, y+1);
+        Tile downstreamTile = getTile(x, y + 1);
 
-        if(!(downstreamTile instanceof Ocean)) return;
+        if (!(downstreamTile instanceof Ocean)) return;
 
-        ((Ocean)downstreamTile).setSupply(upstreamOcean.getSupply());
+        ((Ocean) downstreamTile).setSupply(upstreamOcean.getSupply());
         upstreamOcean.setSupply(null);
     }
 

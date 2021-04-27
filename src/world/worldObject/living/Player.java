@@ -109,10 +109,10 @@ public class Player extends Character implements Illustratable {
         Supply supply = ocean.getSupply();
 
         if(supply == Supply.BARREL){
-
+            inventory.add(Supply.lootBarrel());
+        } else {
+            inventory.add( supply, 1);
         }
-
-        inventory.add( supply, 1);
         ocean.setSupply(null);
     }
 
