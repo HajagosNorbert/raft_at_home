@@ -1,7 +1,7 @@
 package world;
 
 import helper.Illustrations;
-import world.worldObject.Building;
+import world.worldObject.craft.Craftable;
 import world.worldObject.supply.Supply;
 
 public class Ocean implements Tile {
@@ -21,7 +21,7 @@ public class Ocean implements Tile {
     }
 
     @Override
-    public Building getBuilding() {
+    public Craftable getBuilding() {
         return null;
     }
 }

@@ -5,6 +5,7 @@ import helper.Direction;
 import helper.UserInputException;
 import world.Map;
 import world.Ocean;
+import world.worldObject.craft.Craftable;
 import world.worldObject.living.Action;
 import world.worldObject.living.Player;
 
@@ -52,8 +53,8 @@ public class IOHandler {
         return m;
     }
 
-    private static Action tryInteractHereAction(Matcher m, Player player, Map map){
-        if(m.group(2) == null || !m.group(2).equals("5")) return null;
+    private static Action tryInteractHereAction(Matcher m, Player player, Map map) {
+        if (m.group(2) == null || !m.group(2).equals("5")) return null;
         int x = player.getX();
         int y = player.getY();
         if (map.getTile(x, y) instanceof Ocean) {
@@ -64,21 +65,44 @@ public class IOHandler {
         return null;
     }
 
-    private static Action tryMoveActionFormat(Matcher m, Player player, Map map){
+    private static Action tryMoveActionFormat(Matcher m, Player player, Map map) {
         if (m.group(2) == null) return null;
         Direction moveDir = Direction.directionCodeToDirection(Integer.parseInt(m.group(2)));
         return () -> player.move(map, moveDir);
     }
 
-    private static boolean tryHelpFormat(Matcher m, Game game){
-        if (m.group(3) == null) return  false;
+    private static boolean tryHelpFormat(Matcher m, Game game) {
+        if (m.group(3) == null) return false;
         help(game.getGameIllustration());
         return true;
     }
-    private static Action tryGatherAction(Matcher m, Player player, Map map){
-        if (m.group(5) == null) return  null;
+
+    private static Action tryGatherAction(Matcher m, Player player, Map map) {
+        if (m.group(5) == null) return null;
         Direction direction = Direction.directionCodeToDirection(Integer.parseInt(m.group(5).split(" ")[1]));
         return () -> player.gatherSupply(map, direction);
+    }
+    private static String getCraftableClassName(String craftableName){
+        return Craftable.class.getPackageName()+"."+Character.toUpperCase(craftableName.charAt(0)) + craftableName.substring(1);
+    }
+
+    private static Action tryCraftAction(Matcher m, Player player, Map map) {
+        if (m.group(7) == null) return null;
+        Craftable.class.getPackageName();
+        Direction direction = Direction.directionCodeToDirection(Integer.parseInt(m.group(7).split(" ")[2]));
+        String craftableName = m.group(7).split(" ")[1];
+        String craftableClassName = getCraftableClassName(craftableName);
+        Class craftableClass;
+        Craftable craftable;
+        try {
+            craftableClass = Class.forName(craftableClassName);
+            //class.getConstructor(int.class, int.class, double.class).newInstance(_xval1,_xval2,_pval);
+            craftable = (Craftable) craftableClass.getConstructor().newInstance();
+            return () -> player.craft(craftable, map, direction);
+        } catch (Exception e) {
+            System.out.println("Internal error occured, while locating a the specified item to craft. Please try again");
+        }
+        return null;
     }
 
     public static Action getAction(Game game) {
@@ -88,16 +112,19 @@ public class IOHandler {
         Matcher m = getCommand();
 
         boolean helped = tryHelpFormat(m, game);
-        if(helped) return getAction(game);
+        if (helped) return getAction(game);
 
-        action = tryInteractHereAction(m, player,map);
-        if(action != null) return action;
+        action = tryInteractHereAction(m, player, map);
+        if (action != null) return action;
 
-        action = tryMoveActionFormat(m, player,map);
-        if(action != null) return action;
+        action = tryMoveActionFormat(m, player, map);
+        if (action != null) return action;
 
         action = tryGatherAction(m, player, map);
-        if(action != null) return action;
+        if (action != null) return action;
+
+        action = tryCraftAction(m, player, map);
+        if (action != null) return action;
 
         return null;
     }

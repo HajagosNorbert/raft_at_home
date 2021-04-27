@@ -1,8 +1,7 @@
 package world;
 
+import world.worldObject.craft.Platform;
 import world.worldObject.supply.Supply;
-
-import java.util.Arrays;
 
 public class Map {
 
@@ -36,7 +35,10 @@ public class Map {
         }
 
         placeRaftOnTheMIddle();
+    }
 
+    public void placePlatform(int x, int y){
+        tiles[y][x] = new Platform();
     }
 
     private void placeRaftOnTheMIddle() {

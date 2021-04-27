@@ -1,7 +1,7 @@
 package world;
 
-import world.worldObject.Building;
+import world.worldObject.craft.Craftable;
 
 public interface Tile extends Illustratable {
-    public Building getBuilding();
+    public Craftable getBuilding();
 }

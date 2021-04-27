@@ -12,6 +12,19 @@ public class Inventory {
         resourceAmounts = Arrays.stream(Resource.values()).collect(Collectors.toMap(resource -> resource, resource -> 0));
     }
 
+    public Inventory(Map<Resource, Integer> resourceAmounts) {
+        this.resourceAmounts = resourceAmounts;
+    }
+
+    public void remove(Map<Resource, Integer> costs){
+        //átírni a -t és b -t, ha jók.
+        costs.forEach((resource, cost )-> resourceAmounts.merge(resource, cost, (a, b) -> a - b));
+    }
+
+    public Map<Resource, Integer> getResourceAmounts() {
+        return resourceAmounts;
+    }
+
     public void add(Resource resource, int amount){
         resourceAmounts.put(resource, resourceAmounts.get(resource) + amount);
     }
