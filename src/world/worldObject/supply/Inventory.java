@@ -21,10 +21,10 @@ public class Inventory {
         //átírni a -t és b -t, ha jók.
         costs.forEach((resource, cost) -> resourceAmounts.merge(resource, cost, (a, b) -> a - b));
     }
-
-    public Map<Resource, Integer> getResourceAmounts() {
-        return resourceAmounts;
+    public void remove(Resource resource, int amount) {
+        resourceAmounts.put(resource, resourceAmounts.get(resource) - amount);
     }
+
 
     public void add(Resource resource, int amount) {
         resourceAmounts.put(resource, resourceAmounts.get(resource) + amount);
@@ -39,6 +39,9 @@ public class Inventory {
         amountsToAdd.forEach((resource, amount) -> resourceAmounts.merge(resource, amount, Integer::sum));
     }
 
+    public int getResourceAmount(Resource resource) {
+        return resourceAmounts.get(resource);
+    }
 
     public String getIllustration() {
         return resourceAmounts.entrySet().stream().map(this::getResourceAmountIllustration).collect(Collectors.joining(" | "));

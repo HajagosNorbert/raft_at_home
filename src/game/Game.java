@@ -12,40 +12,38 @@ import java.io.File;
 import java.util.Scanner;
 
 public class Game {
-    private final int maxNumberOfActions;
+    public static final int maxNumberOfActions;
     private final int mapWidth;
     private final int mapHeight;
 
-    private int actionCounter;
+    public static int actionCount;
     private Map map;
     private Player player;
     private Shark shark;
 
     {
-        maxNumberOfActions = 1000;
         mapWidth = 35;
         mapHeight = 25;
     }
 
-    public Game(boolean isSimplyIllustrated){
+    static {
+        maxNumberOfActions = 1000;
+    }
+
+    public Game(boolean isSimplyIllustrated) {
         Illustrations.setIsSimple(isSimplyIllustrated);
 
         File saveFile = new File("raftsave.json");
 
         boolean needToLoadGame = false;
-        if(saveFile.exists()){
+        if (saveFile.exists()) {
             needToLoadGame = IOHandler.askBinaryQuestion("Savefile found! Do you want to load the game or create a new?", "load", "new");
         }
-        if(needToLoadGame){
+        if (needToLoadGame) {
             GameLoader.load(this);
             return;
         }
-        createGame(
-                0,
-                new Map(mapWidth, mapHeight),
-                new Player(mapWidth/2, mapHeight/2),
-                new Shark(mapWidth-1, mapHeight-1)
-        );
+        createGame(0, new Map(mapWidth, mapHeight), new Player(mapWidth / 2, mapHeight / 2), new Shark(mapWidth / 2 - 2, mapHeight /2 -2));
     }
 
     public Player getPlayer() {
@@ -56,20 +54,20 @@ public class Game {
         return map;
     }
 
-    public void createGame(int actionCounter, Map map, Player player, Shark shark){
-        this.actionCounter = actionCounter;
+    public void createGame(int actionCounter, Map map, Player player, Shark shark) {
+        Game.actionCount = actionCounter;
         this.map = map;
         this.player = player;
         this.shark = shark;
     }
 
-    public void start(){
+    public void start() {
         IOHandler.displayGameIllustration(getGameIllustration());
         IOHandler.greet();
-        while(true){
+        while (true) {
             try {
                 IOHandler.getAction(this).execute();
-            }catch (ImpossibleActionException e){
+            } catch (ImpossibleActionException e) {
                 System.out.println(e.getMessage());
                 continue;
             }
@@ -78,51 +76,53 @@ public class Game {
             spawnSupplies();
 
             IOHandler.displayGameIllustration(getGameIllustration());
-            //sharkaction
+            IOHandler.deleteMessage();
+            shark.moveRandomly(map);
         }
     }
 
-    public void actionHappened(){
+    public void actionHappened() {
         player.sufferHunger();
         player.sufferThirst();
-        if(!player.isAlive()){
+        if (!player.isAlive()) {
             lose();
         }
-        actionCounter++;
-        if(actionCounter >= maxNumberOfActions && player.isAlive()){
+        actionCount++;
+        if (actionCount >= maxNumberOfActions && player.isAlive()) {
             win();
         }
     }
 
-    private void spawnSupplies(){
+    private void spawnSupplies() {
         getMap().spawnSupplies();
     }
 
-    private void flowSupplies(){
+    private void flowSupplies() {
         getMap().beginFlowSupplies();
     }
 
-    private void lose(){
-        System.out.println("You have died due to "+player.getCauseOfDeath()+". Press [Enter] to exit");
+    private void lose() {
+        System.out.println("You have died due to " + player.getCauseOfDeath() + ". Press [Enter] to exit");
 
         System.exit(0);
     }
 
-    private void win(){
+    private void win() {
         System.out.println("Congrats to you! You have won! press [Enter] to exit");
         Scanner sc = new Scanner(System.in);
         sc.nextLine();
         System.exit(0);
     }
 
-    public String getGameIllustration(){
+    public String getGameIllustration() {
         String worldIllustration = getWorldIllustration();
-        String InventoryIllustration = player.getInventory().getIllustration()+System.lineSeparator();
-        String playerStatusIllustration = player.getStatusIllustration()+System.lineSeparator();
-        return worldIllustration+playerStatusIllustration+InventoryIllustration;
+        String InventoryIllustration = player.getInventory().getIllustration() + System.lineSeparator();
+        String playerStatusIllustration = player.getStatusIllustration() + System.lineSeparator();
+        String message = IOHandler.getMessage();
+        return worldIllustration + playerStatusIllustration + InventoryIllustration + message;
     }
 
-    private String getWorldIllustration(){
+    private String getWorldIllustration() {
         String[][] tileIllustrations = map.getTileIllustrations();
 
         tileIllustrations[player.getY()][player.getX()] = player.getIllustration();

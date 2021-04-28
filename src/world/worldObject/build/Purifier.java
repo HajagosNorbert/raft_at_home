@@ -1,22 +1,28 @@
 package world.worldObject.build;
 
+import game.Game;
 import helper.Illustrations;
 import world.Illustratable;
+import world.worldObject.living.Player;
 import world.worldObject.supply.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Purifier implements PlatformBuilding, Illustratable {
-
-    private int roundsUntilWaterPurified;
+public class Purifier extends PlatformBuilding {
 
     {
-        roundsUntilWaterPurified = 25;
+        refilmentAmount = 40;
+        startMakingConsumable();
     }
 
-    public boolean isPurificationComplete(){
-         return roundsUntilWaterPurified <= 0;
+    public void consumeFromIt(Player player){
+        player.drink(refilmentAmount);
+        startMakingConsumable();
+    }
+
+    public void startMakingConsumable(){
+        makingStartedAt = Game.actionCount+1;
     }
 
     public Map<Resource, Integer> getResourceCost() {
@@ -24,10 +30,6 @@ public class Purifier implements PlatformBuilding, Illustratable {
         map.put(Resource.LEAF, 2);
         map.put(Resource.DEBRIS, 4);
         return map;
-    }
-
-    public void purify(){
-        roundsUntilWaterPurified--;
     }
 
     @Override

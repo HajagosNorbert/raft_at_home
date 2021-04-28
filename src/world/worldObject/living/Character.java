@@ -20,6 +20,22 @@ public class Character {
         setY(newY);
     }
 
+    protected int getNewX(Direction direction) {
+        return getX() + direction.x;
+    }
+
+    protected void throwExceptionIfOutOfWorld(int x, int y, int height, int width) throws ImpossibleActionException {
+        if (outOfWorld(x, y, height, width))throw new ImpossibleActionException("Out of world");
+    }
+
+    protected boolean outOfWorld(int x, int y, int height, int width){
+        return y < 0 || y >= height || x < 0 || x >= width;
+    }
+
+    protected int getNewY(Direction direction) {
+        return getY() + direction.y;
+    }
+
     public void setX(int x) {
         this.x = x;
     }

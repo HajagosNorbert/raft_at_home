@@ -24,9 +24,11 @@ public class IOHandler {
     private static Pattern commandPattern;
     private static final String clearScreanText;
     private static String helpText;
+    private static String message;
+
 
     static {
-        //A working directory módosításával működik csak
+        message = "";
         Path helpTextPath = Paths.get("resources/helptext.txt");
         try {
             helpText = Files.readString(helpTextPath);
@@ -37,6 +39,17 @@ public class IOHandler {
         clearScreanText = "\033[H\033[2J";
         sc = new Scanner(System.in);
         commandPattern = Pattern.compile("^(([1-9])|(h(elp)?)|(g(ather)? [1-9])|(b(uild)? (fireplace|purifier|net|platform) [1-9]))$");
+    }
+
+    public static void addMessage(String message){
+        IOHandler.message += message + System.lineSeparator();
+    }
+    public static void deleteMessage(){
+        message = "";
+    }
+
+    public static String getMessage(){
+        return message;
     }
 
     static private Matcher getCommand() {
@@ -61,9 +74,7 @@ public class IOHandler {
         if (map.getTile(x, y) instanceof Ocean) {
             return () -> player.fish();
         }
-        //drink
-        //eat
-        return null;
+        return () -> player.useBuilding(map);
     }
 
     private static Action tryMoveActionFormat(Matcher m, Player player, Map map) {

@@ -1,5 +1,7 @@
 package world.worldObject.living;
 
+import IOHandling.IOHandler;
+import game.Game;
 import helper.Direction;
 import helper.Illustrations;
 import helper.ImpossibleActionException;
@@ -15,10 +17,16 @@ import java.util.Iterator;
 public class Player extends Character implements Illustratable {
 
     private int foodFullnes;
+    private final int maxFoodFullnes;
     private int drinkFullnes;
+    private final int maxDrinkFullnes;
     private int defendableSharkAttackCount;
     private Inventory inventory;
 
+    {
+        maxDrinkFullnes = 100;
+        maxFoodFullnes = 100;
+    }
 
     public void sufferHunger() {
         foodFullnes--;
@@ -47,8 +55,8 @@ public class Player extends Character implements Illustratable {
 
     public Player(int x, int y) {
         super(x, y);
-        this.foodFullnes = 100;
-        this.drinkFullnes = 100;
+        this.foodFullnes = maxFoodFullnes;
+        this.drinkFullnes = maxDrinkFullnes;
         this.defendableSharkAttackCount = 0;
 //        this.inventory = new Inventory();
 // for TESTING
@@ -56,8 +64,8 @@ public class Player extends Character implements Illustratable {
         map.put(Resource.WOOD, 100);
         map.put(Resource.LEAF, 100);
         map.put(Resource.DEBRIS, 100);
-        map.put(Resource.POTATO, 100);
-        map.put(Resource.FISH, 100);
+        map.put(Resource.POTATO, 0);
+        map.put(Resource.FISH, 0);
         this.inventory = new Inventory(map);
     }
 
@@ -77,18 +85,6 @@ public class Player extends Character implements Illustratable {
 
         setX(newX);
         setY(newY);
-    }
-
-    private int getNewX(Direction direction) {
-        return getX() + direction.x;
-    }
-
-    private int getNewY(Direction direction) {
-        return getY() + direction.y;
-    }
-
-    private void throwExceptionIfOutOfWorld(int x, int y, int height, int width) throws ImpossibleActionException {
-        if (y < 0 || y >= height || x < 0 || x >= width) throw new ImpossibleActionException("Out of world");
     }
 
     public void fish() {
@@ -127,13 +123,13 @@ public class Player extends Character implements Illustratable {
         Iterator i = costs.keySet().iterator();
         while (i.hasNext()) {
             Resource resource = (Resource) i.next();
-            if (inventory.getResourceAmounts().get(resource) - costs.get(resource) < 0) return false;
+            if (inventory.getResourceAmount(resource) - costs.get(resource) < 0) return false;
         }
         return true;
     }
 
     public void build(Building building, Map map, Direction direction) throws ImpossibleActionException {
-        if(!(map.getTile(getX(), getY()) instanceof Platform))
+        if (!(map.getTile(getX(), getY()) instanceof Platform))
             throw new ImpossibleActionException("Can only build while on a platform");
         if (!canBuild(building)) throw new ImpossibleActionException("You need more resources!");
 
@@ -146,14 +142,63 @@ public class Player extends Character implements Illustratable {
         if (building instanceof Platform) {
             placePlatform(buildingPosX, buildingPosY, map);
         }
-        if (building instanceof PlatformBuilding) {
-            placePlatfomBuilding((PlatformBuilding) building, buildingPosX, buildingPosY, map);
+        if (building instanceof PlatformBuilding platformBuilding) {
+            placePlatfomBuilding(platformBuilding, buildingPosX, buildingPosY, map);
         }
-        if (building instanceof OceanBuilding) {
-            placeOceanBuilding((OceanBuilding) building, buildingPosX, buildingPosY, map);
+        if (building instanceof OceanBuilding oceanBuilding) {
+            placeOceanBuilding(oceanBuilding, buildingPosX, buildingPosY, map);
         }
-        payCraftingCosts(building);
+        payBuildingCosts(building);
         return;
+    }
+
+    public void useBuilding(Map map) throws ImpossibleActionException {
+        Building building = map.getTile(getX(), getY()).getBuilding();
+        if (!(building instanceof PlatformBuilding))
+            throw new ImpossibleActionException("No building here, you could use");
+
+        PlatformBuilding platformBuilding = (PlatformBuilding) building;
+
+
+        if (platformBuilding instanceof Fireplace fireplace && !fireplace.hasFoodInside) {
+            placeFoodOnFireplace(fireplace);
+            return;
+        }
+        consumeFromBuilding(platformBuilding);
+    }
+    private void consumeFromBuilding(PlatformBuilding platformBuilding) throws ImpossibleActionException{
+        if (platformBuilding.actionsUntilConsumption() != 0)
+            throw new ImpossibleActionException("Needs " + platformBuilding.actionsUntilConsumption() + " more actions until ready to consume");
+        platformBuilding.consumeFromIt(this);
+    }
+
+    private void placeFoodOnFireplace(Fireplace fireplace) throws ImpossibleActionException {
+        Resource food;
+        try {
+            food = chooseRawFood();
+        } catch (ImpossibleActionException e){
+            throw new ImpossibleActionException(e.getMessage()+" to place it on the fire.");
+        }
+        inventory.remove(food, 1);
+        fireplace.startMakingConsumable();
+        IOHandler.addMessage("Started cooking");
+    }
+
+    private Resource chooseRawFood() throws ImpossibleActionException {
+        if (inventory.getResourceAmount(Resource.POTATO) > 0) return Resource.POTATO;
+        if (inventory.getResourceAmount(Resource.FISH) > 0) return Resource.FISH;
+        throw new ImpossibleActionException("You don't have any potato or fish");
+    }
+
+
+    public void drink(int amount) {
+        drinkFullnes += amount;
+        if (drinkFullnes > maxDrinkFullnes) drinkFullnes = maxDrinkFullnes;
+    }
+
+    public void eat(int amount) {
+        foodFullnes += amount;
+        if (foodFullnes > maxFoodFullnes) foodFullnes = maxFoodFullnes;
     }
 
     private void placeOceanBuilding(OceanBuilding building, int x, int y, Map map) throws ImpossibleActionException {
@@ -167,9 +212,6 @@ public class Player extends Character implements Illustratable {
         map.placeBuilding(building, x, y);
     }
 
-    private void payCraftingCosts(Building building) {
-        getInventory().remove(building.getResourceCost());
-    }
 
     private void placePlatform(int x, int y, Map map) throws ImpossibleActionException {
         Tile tile = map.getTile(x, y);
@@ -178,6 +220,10 @@ public class Player extends Character implements Illustratable {
         map.placePlatform(x, y);
     }
 
+
+    private void payBuildingCosts(Building building) {
+        getInventory().remove(building.getResourceCost());
+    }
 
     public Inventory getInventory() {
         return inventory;
