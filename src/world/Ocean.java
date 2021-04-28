@@ -1,10 +1,9 @@
 package world;
 
 import helper.Illustrations;
-import world.worldObject.craft.Craftable;
 import world.worldObject.supply.Supply;
 
-public class Ocean implements Tile {
+public class Ocean extends Tile {
     private Supply supply;
 
     public void setSupply(Supply supply) {
@@ -17,11 +16,11 @@ public class Ocean implements Tile {
 
     @Override
     public String getIllustration() {
-        return (supply != null)? supply.getIllustration(): Illustrations.getOceanIllustration();
+        if (getBuilding() != null)
+            return getBuilding().getIllustration();
+        if (supply != null)
+            return supply.getIllustration();
+        return Illustrations.getOceanIllustration();
     }
 
-    @Override
-    public Craftable getBuilding() {
-        return null;
-    }
 }

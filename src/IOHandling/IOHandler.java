@@ -5,11 +5,12 @@ import helper.Direction;
 import helper.UserInputException;
 import world.Map;
 import world.Ocean;
-import world.worldObject.craft.Craftable;
+import world.worldObject.build.Building;
 import world.worldObject.living.Action;
 import world.worldObject.living.Player;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +36,7 @@ public class IOHandler {
 
         clearScreanText = "\033[H\033[2J";
         sc = new Scanner(System.in);
-        commandPattern = Pattern.compile("^(([1-9])|(h(elp)?)|(g(ather)? [1-9])|(b(uild)? (spear|fireplace|purifier|net|platform) [1-9]))$");
+        commandPattern = Pattern.compile("^(([1-9])|(h(elp)?)|(g(ather)? [1-9])|(b(uild)? (fireplace|purifier|net|platform) [1-9]))$");
     }
 
     static private Matcher getCommand() {
@@ -82,23 +83,27 @@ public class IOHandler {
         Direction direction = Direction.directionCodeToDirection(Integer.parseInt(m.group(5).split(" ")[1]));
         return () -> player.gatherSupply(map, direction);
     }
-    private static String getCraftableClassName(String craftableName){
-        return Craftable.class.getPackageName()+"."+Character.toUpperCase(craftableName.charAt(0)) + craftableName.substring(1);
+    private static String getBuildingClassName(String buildingName){
+        return Building.class.getPackageName()+"."+Character.toUpperCase(buildingName.charAt(0)) + buildingName.substring(1);
     }
 
-    private static Action tryCraftAction(Matcher m, Player player, Map map) {
+    private static Action tryBuildAction(Matcher m, Player player, Map map) {
         if (m.group(7) == null) return null;
-        Craftable.class.getPackageName();
         Direction direction = Direction.directionCodeToDirection(Integer.parseInt(m.group(7).split(" ")[2]));
-        String craftableName = m.group(7).split(" ")[1];
-        String craftableClassName = getCraftableClassName(craftableName);
-        Class craftableClass;
-        Craftable craftable;
+        String buildingName = m.group(7).split(" ")[1];
+        String buildingClassName = getBuildingClassName(buildingName);
+        Class buildingClass;
+        Building building;
         try {
-            craftableClass = Class.forName(craftableClassName);
-            //class.getConstructor(int.class, int.class, double.class).newInstance(_xval1,_xval2,_pval);
-            craftable = (Craftable) craftableClass.getConstructor().newInstance();
-            return () -> player.craft(craftable, map, direction);
+            buildingClass = Class.forName(buildingClassName);
+            Constructor buildingConstructor = buildingClass.getConstructors()[0];
+            if(buildingConstructor.getParameterTypes().length > 0){
+                building = (Building) buildingConstructor.newInstance(player);
+            } else {
+                building = (Building) buildingConstructor.newInstance();
+            }
+
+            return () -> player.build(building, map, direction);
         } catch (Exception e) {
             System.out.println("Internal error occured, while locating a the specified item to craft. Please try again");
         }
@@ -123,7 +128,7 @@ public class IOHandler {
         action = tryGatherAction(m, player, map);
         if (action != null) return action;
 
-        action = tryCraftAction(m, player, map);
+        action = tryBuildAction(m, player, map);
         if (action != null) return action;
 
         return null;
@@ -135,7 +140,7 @@ public class IOHandler {
 
     public static void help(String gameIllustration) {
         System.out.print(helpText);
-        sc.nextLine();
+        sc.next();
         displayGameIllustration(gameIllustration);
     }
 

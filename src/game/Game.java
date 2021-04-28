@@ -5,11 +5,11 @@ import IOHandling.IOHandler;
 import helper.Illustrations;
 import helper.ImpossibleActionException;
 import world.Map;
-import world.Ocean;
 import world.worldObject.living.Player;
 import world.worldObject.living.Shark;
 
 import java.io.File;
+import java.util.Scanner;
 
 public class Game {
     private final int maxNumberOfActions;
@@ -99,7 +99,7 @@ public class Game {
     }
 
     private void flowSupplies(){
-        getMap().flowSupplies();
+        getMap().beginFlowSupplies();
     }
 
     private void lose(){
@@ -110,7 +110,8 @@ public class Game {
 
     private void win(){
         System.out.println("Congrats to you! You have won! press [Enter] to exit");
-        System.console().readLine();
+        Scanner sc = new Scanner(System.in);
+        sc.nextLine();
         System.exit(0);
     }
 

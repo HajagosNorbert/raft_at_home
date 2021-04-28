@@ -12,9 +12,8 @@ Commands available:
 
 'g [direction-number]': gather resource from the tile specified by the direction-number
 
-'b [what] [direction-number]': builds the specified craftable on the tile specified by the direction-number.
+'b [what] [direction-number]': builds the specified building on the tile specified by the direction-number.
 [what] can be the following
-   'spear' (arbitrary direction number)
    'fireplace'
    'purifier'
    'net'

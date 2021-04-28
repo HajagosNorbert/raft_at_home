@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public class Inventory {
     private Map<Resource, Integer> resourceAmounts;
+
     public Inventory() {
         resourceAmounts = Arrays.stream(Resource.values()).collect(Collectors.toMap(resource -> resource, resource -> 0));
     }
@@ -16,33 +17,34 @@ public class Inventory {
         this.resourceAmounts = resourceAmounts;
     }
 
-    public void remove(Map<Resource, Integer> costs){
+    public void remove(Map<Resource, Integer> costs) {
         //átírni a -t és b -t, ha jók.
-        costs.forEach((resource, cost )-> resourceAmounts.merge(resource, cost, (a, b) -> a - b));
+        costs.forEach((resource, cost) -> resourceAmounts.merge(resource, cost, (a, b) -> a - b));
     }
 
     public Map<Resource, Integer> getResourceAmounts() {
         return resourceAmounts;
     }
 
-    public void add(Resource resource, int amount){
+    public void add(Resource resource, int amount) {
         resourceAmounts.put(resource, resourceAmounts.get(resource) + amount);
     }
 
-    public void add(Supply supply, int amount){
-        add( Resource.valueOf(supply.name()), 1);
+    public void add(Supply supply, int amount) {
+        if (supply == Supply.BARREL) add(Supply.lootBarrel());
+        else add(Resource.valueOf(supply.name()), 1);
     }
 
-    public void add(Map<Resource, Integer> amountsToAdd){
-        amountsToAdd.forEach((resource, amount )-> resourceAmounts.merge(resource, amount, Integer::sum));
+    public void add(Map<Resource, Integer> amountsToAdd) {
+        amountsToAdd.forEach((resource, amount) -> resourceAmounts.merge(resource, amount, Integer::sum));
     }
 
 
-    public String getIllustration(){
+    public String getIllustration() {
         return resourceAmounts.entrySet().stream().map(this::getResourceAmountIllustration).collect(Collectors.joining(" | "));
     }
 
-    private String getResourceAmountIllustration(Map.Entry<Resource, Integer> resourceAmount){
-        return resourceAmount.getKey().name().toLowerCase()+": "+resourceAmount.getValue().toString();
+    private String getResourceAmountIllustration(Map.Entry<Resource, Integer> resourceAmount) {
+        return resourceAmount.getKey().name().toLowerCase() + ": " + resourceAmount.getValue().toString();
     }
 }

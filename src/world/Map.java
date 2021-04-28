@@ -1,6 +1,8 @@
 package world;
 
-import world.worldObject.craft.Platform;
+import world.worldObject.build.Building;
+import world.worldObject.build.Net;
+import world.worldObject.build.Platform;
 import world.worldObject.supply.Supply;
 
 public class Map {
@@ -37,9 +39,14 @@ public class Map {
         placeRaftOnTheMIddle();
     }
 
-    public void placePlatform(int x, int y){
+    public void placePlatform(int x, int y) {
         tiles[y][x] = new Platform();
     }
+
+    public void placeBuilding(Building building, int x, int y) {
+        getTile(x, y).setBuilding(building);
+    }
+
 
     private void placeRaftOnTheMIddle() {
         tiles[height / 2][width / 2] = new Platform();
@@ -74,7 +81,7 @@ public class Map {
         ocean.setSupply(supply);
     }
 
-    public void flowSupplies() {
+    public void beginFlowSupplies() {
         destroyBottomRowSupplies();
 
         for (int y = height - 2; y >= 0; y--) {
@@ -100,9 +107,11 @@ public class Map {
         Ocean upstreamOcean = ((Ocean) getTile(x, y));
         Tile downstreamTile = getTile(x, y + 1);
 
-        if (!(downstreamTile instanceof Ocean)) return;
-
-        ((Ocean) downstreamTile).setSupply(upstreamOcean.getSupply());
+        if (downstreamTile.getBuilding() instanceof Net) {
+            ((Net) downstreamTile.getBuilding()).catchSupply(upstreamOcean.getSupply());
+        } else if((downstreamTile instanceof Ocean)){
+            ((Ocean) downstreamTile).setSupply(upstreamOcean.getSupply());
+        }
         upstreamOcean.setSupply(null);
     }
 

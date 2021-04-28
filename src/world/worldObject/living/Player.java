@@ -4,9 +4,7 @@ import helper.Direction;
 import helper.Illustrations;
 import helper.ImpossibleActionException;
 import world.*;
-import world.worldObject.craft.Craftable;
-import world.worldObject.craft.Platform;
-import world.worldObject.craft.Spear;
+import world.worldObject.build.*;
 import world.worldObject.supply.Inventory;
 import world.worldObject.supply.Resource;
 import world.worldObject.supply.Supply;
@@ -27,10 +25,10 @@ public class Player extends Character implements Illustratable {
     }
 
     public String getCauseOfDeath() {
-        if (foodFullnes < 0) {
+        if (foodFullnes <= 0) {
             return "starvation";
         }
-        if (drinkFullnes < 0) {
+        if (drinkFullnes <= 0) {
             return "dehydration";
         }
         if (defendableSharkAttackCount < 0) {
@@ -75,7 +73,7 @@ public class Player extends Character implements Illustratable {
         int newX = getNewX(direction);
         int newY = getNewY(direction);
 
-        if (outOfWorld(newX, newY, map.height, map.width)) throw new ImpossibleActionException("Out of the world");
+        throwExceptionIfOutOfWorld(newX, newY, map.height, map.width);
 
         setX(newX);
         setY(newY);
@@ -89,8 +87,8 @@ public class Player extends Character implements Illustratable {
         return getY() + direction.y;
     }
 
-    private boolean outOfWorld(int x, int y, int height, int width) {
-        return y < 0 || y >= height || x < 0 || x >= width;
+    private void throwExceptionIfOutOfWorld(int x, int y, int height, int width) throws ImpossibleActionException {
+        if (y < 0 || y >= height || x < 0 || x >= width) throw new ImpossibleActionException("Out of world");
     }
 
     public void fish() {
@@ -101,8 +99,8 @@ public class Player extends Character implements Illustratable {
 
     private void throwExceptionIfGatheringImpossible(int supplyPosX, int supplyPosY, Map map) throws ImpossibleActionException {
 
-        if (outOfWorld(supplyPosX, supplyPosY, map.height, map.width))
-            throw new ImpossibleActionException("Out of the world");
+        throwExceptionIfOutOfWorld(supplyPosX, supplyPosY, map.height, map.width);
+
         Tile tile = map.getTile(supplyPosX, supplyPosY);
         if (!(tile instanceof Ocean)) throw new ImpossibleActionException("Only the ocean has supplies flowing");
 
@@ -119,61 +117,64 @@ public class Player extends Character implements Illustratable {
         Ocean ocean = (Ocean) map.getTile(supplyPosX, supplyPosY);
         Supply supply = ocean.getSupply();
 
-        if (supply == Supply.BARREL) {
-            inventory.add(Supply.lootBarrel());
-        } else {
-            inventory.add(supply, 1);
-        }
+        inventory.add(supply, 1);
+
         ocean.setSupply(null);
     }
 
-    private boolean canCraft(Craftable craftable){
-        java.util.Map<Resource, Integer> costs =  craftable.getResourceCost();
+    private boolean canBuild(Building building) {
+        java.util.Map<Resource, Integer> costs = building.getResourceCost();
         Iterator i = costs.keySet().iterator();
-        while (i.hasNext()){
+        while (i.hasNext()) {
             Resource resource = (Resource) i.next();
-            if (inventory.getResourceAmounts().get(resource) - costs.get(resource) < 0)
-                return false;
+            if (inventory.getResourceAmounts().get(resource) - costs.get(resource) < 0) return false;
         }
         return true;
     }
 
-    public void craft(Craftable craftable, Map map, Direction direction) throws ImpossibleActionException{
-        if(!canCraft(craftable))
-            throw new ImpossibleActionException("You need more resources!");
+    public void build(Building building, Map map, Direction direction) throws ImpossibleActionException {
+        if(!(map.getTile(getX(), getY()) instanceof Platform))
+            throw new ImpossibleActionException("Can only build while on a platform");
+        if (!canBuild(building)) throw new ImpossibleActionException("You need more resources!");
 
-        if(craftable instanceof Spear){
-            craftSpear((Spear) craftable);
-            return;
+        int buildingPosX = getNewX(direction);
+        int buildingPosY = getNewY(direction);
+
+        throwExceptionIfOutOfWorld(buildingPosX, buildingPosY, map.height, map.width);
+
+
+        if (building instanceof Platform) {
+            placePlatform(buildingPosX, buildingPosY, map);
         }
-
-        int craftablePosX = getNewX(direction);
-        int craftablePosY = getNewY(direction);
-
-        if(outOfWorld(craftablePosX, craftablePosY, map.height, map.width))
-            throw new ImpossibleActionException("Out of the world");
-
-
-        if (craftable instanceof Platform) {
-             placePlatform(craftablePosX, craftablePosY, map);
-            return;
+        if (building instanceof PlatformBuilding) {
+            placePlatfomBuilding((PlatformBuilding) building, buildingPosX, buildingPosY, map);
         }
+        if (building instanceof OceanBuilding) {
+            placeOceanBuilding((OceanBuilding) building, buildingPosX, buildingPosY, map);
+        }
+        payCraftingCosts(building);
+        return;
     }
 
-    private void craftSpear(Spear spear){
+    private void placeOceanBuilding(OceanBuilding building, int x, int y, Map map) throws ImpossibleActionException {
+        if (map.getTile(x, y) instanceof Platform) throw new ImpossibleActionException("Place it on Ocean!");
 
+        map.placeBuilding(building, x, y);
     }
 
-    private void payCraftingCosts(Craftable craftable){
-        getInventory().remove(craftable.getResourceCost());
+    private void placePlatfomBuilding(PlatformBuilding building, int x, int y, Map map) throws ImpossibleActionException {
+        if (map.getTile(x, y) instanceof Ocean) throw new ImpossibleActionException("Place it on a platform!");
+        map.placeBuilding(building, x, y);
     }
 
-    private void placePlatform(int x, int y, Map map) throws ImpossibleActionException{
+    private void payCraftingCosts(Building building) {
+        getInventory().remove(building.getResourceCost());
+    }
+
+    private void placePlatform(int x, int y, Map map) throws ImpossibleActionException {
         Tile tile = map.getTile(x, y);
-        if(!(tile instanceof Ocean))
-            throw new ImpossibleActionException("Build on the ocean");
+        if (!(tile instanceof Ocean)) throw new ImpossibleActionException("Build on the ocean");
 
-        payCraftingCosts(new Platform());
         map.placePlatform(x, y);
     }
 
