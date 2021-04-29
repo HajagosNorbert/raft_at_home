@@ -3,20 +3,31 @@ package world.worldObject.build;
 import game.Game;
 import world.worldObject.living.Player;
 
-public abstract class PlatformBuilding implements Building{
+/**
+ * every building that is on a platform
+ */
+public abstract class PlatformBuilding implements Building {
 
     protected int makingStartedAt;
     protected int timeToMake;
-    protected int refilmentAmount;
+    protected int refillmentAmount;
 
     {
-        timeToMake = 5;
+        timeToMake = 25;
     }
 
-    public int actionsUntilConsumption (){
-        return Math.max(0, timeToMake- (Game.actionCount - makingStartedAt));
+    /**
+     * countdown until the player can use the building
+     * @return
+     */
+    public int actionsUntilConsumption() {
+        return Math.max(0, timeToMake - (Game.actionCount - makingStartedAt));
     }
 
+    /**
+     * the player consumes it's content
+     * @param player
+     */
     public abstract void consumeFromIt(Player player);
 
 }

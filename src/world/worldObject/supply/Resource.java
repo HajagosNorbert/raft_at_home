@@ -2,6 +2,9 @@ package world.worldObject.supply;
 
 import helper.Illustrations;
 
+/**
+ * Everything the player can have in it's inventory
+ */
 public enum Resource {
     WOOD(Illustrations.getWoodIllustration()),
     LEAF(Illustrations.getLeafIllustration()),
@@ -9,9 +12,9 @@ public enum Resource {
     POTATO(Illustrations.getPotatoIllustration()),
     FISH(Illustrations.getFishIllustration());
 
-    private String illustration;
+    private final String illustration;
 
-    Resource(String illustration){
+    Resource(String illustration) {
         this.illustration = illustration;
     }
 

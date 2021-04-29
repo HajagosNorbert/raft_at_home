@@ -2,29 +2,42 @@ package world.worldObject.build;
 
 import game.Game;
 import helper.Illustrations;
-import world.Illustratable;
 import world.worldObject.living.Player;
 import world.worldObject.supply.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * makes fresh water
+ */
 public class Purifier extends PlatformBuilding {
 
     {
-        refilmentAmount = 40;
+        refillmentAmount = 40;
         startMakingConsumable();
     }
 
-    public void consumeFromIt(Player player){
-        player.drink(refilmentAmount);
+    /**
+     * makes the player drink from it
+     * @param player
+     */
+    public void consumeFromIt(Player player) {
+        player.drink(refillmentAmount);
         startMakingConsumable();
     }
 
-    public void startMakingConsumable(){
-        makingStartedAt = Game.actionCount+1;
+    /**
+     * starts the countdown
+     */
+    public void startMakingConsumable() {
+        makingStartedAt = Game.actionCount + 1;
     }
 
+    /**
+     *
+     * @return the cost of building it
+     */
     public Map<Resource, Integer> getResourceCost() {
         var map = new HashMap<Resource, Integer>();
         map.put(Resource.LEAF, 2);

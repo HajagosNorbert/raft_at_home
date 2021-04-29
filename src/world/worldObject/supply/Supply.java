@@ -6,19 +6,24 @@ import world.Illustratable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * everything that can flow down from the ocean and can be picked up
+ */
 public enum Supply implements Illustratable {
     WOOD(Illustrations.getWoodIllustration()), LEAF(Illustrations.getLeafIllustration()), DEBRIS(Illustrations.getDebrisIllustration()), BARREL(Illustrations.getBarrelIllustration());
 
-    private String illustration;
+    private final String illustration;
 
     Supply(String illustration) {
         this.illustration = illustration;
     }
 
-
+    /**
+     * gives back the containment of a barrell which is random
+     * @return
+     */
     public static Map<Resource, Integer> lootBarrel() {
         Map<Resource, Integer> resourceAmounts = new HashMap<>();
-        //deszka, levél, hulladék, burgonya
         for (int i = 0; i < 5; i++) {
             double r = Math.random();
             if (r < 0.25) {

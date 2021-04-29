@@ -9,36 +9,48 @@ import world.worldObject.supply.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * can cook food on it
+ */
 public class Fireplace extends PlatformBuilding {
     public boolean hasFoodInside;
 
-
     {
         hasFoodInside = false;
-        refilmentAmount = 60;
+        refillmentAmount = 60;
     }
 
-    //HEEEEEEEEEEEEEEE
+    /**
+     * marks the time when cooking started
+     */
     public void startMakingConsumable() {
         makingStartedAt = Game.actionCount + 1;
         hasFoodInside = true;
-
     }
 
-
+    /**
+     * makes the player consume it's production
+     * @param player
+     */
     @Override
     public void consumeFromIt(Player player) {
-        player.eat(refilmentAmount);
+        player.eat(refillmentAmount);
         makingStartedAt = Game.actionCount + Game.maxNumberOfActions;
         hasFoodInside = false;
-
     }
 
-    public Fireplace(Player player) {
+    /**
+     * initializes the object with a message to use it later
+     */
+    public Fireplace() {
         super();
         IOHandler.addMessage("You need to place food inside to start cooking. press [5] to do so.");
     }
 
+    /**
+     *
+     * @return the cost of the item
+     */
     @Override
     public Map<Resource, Integer> getResourceCost() {
         var map = new HashMap<Resource, Integer>();

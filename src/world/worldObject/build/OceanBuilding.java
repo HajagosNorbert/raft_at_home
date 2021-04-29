@@ -1,5 +1,8 @@
 package world.worldObject.build;
 
-public interface OceanBuilding extends Building{
+/**
+ * interface for an ocean building
+ */
+public interface OceanBuilding extends Building {
 
 }

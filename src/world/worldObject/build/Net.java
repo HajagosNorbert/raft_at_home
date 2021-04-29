@@ -9,9 +9,16 @@ import world.worldObject.supply.Supply;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Net implements OceanBuilding{
-    private Inventory linkedInventory;
+/**
+ * catches supplies on the flow
+ */
+public class Net implements OceanBuilding {
+    private final Inventory linkedInventory;
 
+    /**
+     *
+     * @return the cost of the net
+     */
     @Override
     public Map<Resource, Integer> getResourceCost() {
         var map = new HashMap<Resource, Integer>();
@@ -20,11 +27,19 @@ public class Net implements OceanBuilding{
         return map;
     }
 
-    public Net(Player player){
+    /**
+     * Links the player's invetóntory to know where to put the caught supply
+     * @param player
+     */
+    public Net(Player player) {
         this.linkedInventory = player.getInventory();
     }
 
-    public void catchSupply(Supply supply){
+    /**
+     * catches the supply and ads it to the player
+     * @param supply
+     */
+    public void catchSupply(Supply supply) {
         linkedInventory.add(supply, 1);
     }
 

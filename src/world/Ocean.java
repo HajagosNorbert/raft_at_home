@@ -3,6 +3,9 @@ package world;
 import helper.Illustrations;
 import world.worldObject.supply.Supply;
 
+/**
+ * an ocean tile
+ */
 public class Ocean extends Tile {
     private Supply supply;
 
@@ -16,10 +19,8 @@ public class Ocean extends Tile {
 
     @Override
     public String getIllustration() {
-        if (getBuilding() != null)
-            return getBuilding().getIllustration();
-        if (supply != null)
-            return supply.getIllustration();
+        if (getBuilding() != null) return getBuilding().getIllustration();
+        if (supply != null) return supply.getIllustration();
         return Illustrations.getOceanIllustration();
     }
 

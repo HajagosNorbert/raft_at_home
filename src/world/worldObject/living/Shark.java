@@ -5,12 +5,14 @@ import helper.Illustrations;
 import world.Illustratable;
 import world.Map;
 import world.Ocean;
-import world.worldObject.build.Platform;
 
 import java.util.Random;
 
+/**
+ * the shark class
+ */
 public class Shark extends Character implements Illustratable {
-    private static Random r;
+    private static final Random r;
 
     static {
         r = new Random();
@@ -20,6 +22,10 @@ public class Shark extends Character implements Illustratable {
         super(x, y);
     }
 
+    /**
+     * moves in a random direction
+     * @param map
+     */
     public void moveRandomly(Map map) {
         Direction[] directions = Direction.values();
         Direction randomDir;
@@ -27,8 +33,8 @@ public class Shark extends Character implements Illustratable {
         int randomPosY;
         int randomTryCounter = 0;
         final int maxRandomTries = 40;
-        while (true){
-            if( randomTryCounter++ > maxRandomTries){
+        while (true) {
+            if (randomTryCounter++ > maxRandomTries) {
                 randomDir = Direction.CURRENT;
                 break;
             }
@@ -38,7 +44,7 @@ public class Shark extends Character implements Illustratable {
             if (outOfWorld(randomPosX, randomPosY, map.height, map.width)) continue;
             if (!(map.getTile(randomPosX, randomPosY) instanceof Ocean)) continue;
             break;
-        };
+        }
 
         move(randomDir);
     }
