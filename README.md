@@ -1,5 +1,5 @@
 A "game.Main" osztályt kell futtatni. 
-
+16 -os Java-val biztosan működik, előbbivel nem biztos.
 A programot érdemes IDE-ben futtatni, IntelliJ -ben biztosan működik a megjelenítés.
 Amennyiben rendellenes a kinézete, futtasd az egyszerűsített változatát, amit úgy érhetsz el, hogy
 argumentumnak megadod a "simple" szót

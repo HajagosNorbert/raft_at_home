@@ -158,7 +158,9 @@ public class IOHandler {
     private static Action tryBuildActionFormat(Matcher m, Player player, Map map) {
         if (m.group(7) == null) return null;
         Direction direction = Direction.directionCodeToDirection(Integer.parseInt(m.group(7).split(" ")[2]));
+        //fireplace | purifier | platform | net
         String buildingName = m.group(7).split(" ")[1];
+        // world.worldObject.build.Fireplace | world.worldObj...
         String buildingClassName = getBuildingClassName(buildingName);
         Class buildingClass;
         Building building;
@@ -218,7 +220,7 @@ public class IOHandler {
      */
     public static void help(String gameIllustration) {
         System.out.print(helpText);
-        sc.next();
+        sc.nextLine();
         displayGameIllustration(gameIllustration);
     }
 
